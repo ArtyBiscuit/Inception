@@ -1,0 +1,9 @@
+
+services:
+  mariadb:
+    env_file: .env
+    container_name: mariadb
+    build: ./requirements/mariadb
+    expose:
+      - 3306:3306
+    #volumes: - mariadb_data:/var/lib/mysql

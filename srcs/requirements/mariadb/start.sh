@@ -1,26 +1,37 @@
 #!/bin/bash
 
-#service mariadb start
-
-if [ -d "/var/lib/mysql/$MYSQL_DATABASE" ]
-then 
- 	echo "Database already exists"
+if [ -d "/var/lib/mysql/mysql" ]; then
+    # ALREADY exists
+    echo "Database already exists"
 else
-    # echo "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$MYSQL_ROOT_PASSWORD';" | mysql -u root --password="$MYSQL_ROOT_PASSWORD"
-    # echo "FLUSH PRIVILEGES;" | mysql -u root --password="$MYSQL_ROOT_PASSWORD"
-    echo "JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ"
+    # NOT INITIALISED
 
- #   mysql_install_db --user=$MYSQL_USER --ldata=var/lib/mysql
+    mysql_install_db --user="mysql" --ldata=/var/lib/mysql
 
-    echo "FLUSH PRIVILEGES;" > /tmp/grant.sql
-	echo "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;" >> /tmp/grant.sql
-	echo "CREATE USER IF NOT EXISTS \`${MYSQL_USER}\`@'localhost' IDENTIFIED BY '${MYSQL_PASSWORD}';" >> /tmp/grant.sql
-	echo "GRANT ALL ON \`${MYSQL_DATABASE}\`.* TO \`${MYSQL_USER}\`@'localhost' IDENTIFIED BY '${MYSQL_PASSWORD}';" >> /tmp/grant.sql
-	echo "GRANT ALL ON *.* TO 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';" >> /tmp/grant.sql
-	echo "FLUSH PRIVILEGES;" >> /tmp/grant.sql
+    <<EOSTRING cat > /tmp/grant.sql
+CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\` CHARACTER SET utf8 COLLATE utf8_general_ci ;
+USE ${MYSQL_DATABASE};
+FLUSH PRIVILEGES;
+GRANT ALL ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%' identified by '${MYSQL_PASS}' WITH GRANT OPTION ;
+SET PASSWORD FOR '${MYSQL_USER}'@'%'=PASSWORD('${MYSQL_PASS}') ;
+DROP DATABASE IF EXISTS test ;
+FLUSH PRIVILEGES ;
+EOSTRING
 
-	/usr/sbin/mysqld --user=mysql --bootstrap --skip-networking=0 < /tmp/grant.sql
-	rm /tmp/grant.sql
+    /usr/sbin/mysqld --bootstrap --user=mysql --verbose=0 --skip-name-resolve --skip-networking=0 < /tmp/grant.sql
+    rm /tmp/grant.sql
 fi
 
-#exec "$@"
+[ ! -d /run/mysqld ] && mkdir -p /run/mysqld
+
+chown -R mysql:mysql /run/mysqld
+
+printf "MariaDB launched on port: \x1b[38:5:208m3306\x1b[0m\n"
+
+echo "Mariadb OK"
+
+if [ $# -gt 0 ]; then
+    exec "$@"
+else
+    /usr/sbin/mysqld --console --user=mysql --verbose=0 --skip-name-resolve --skip-networking=0
+fi

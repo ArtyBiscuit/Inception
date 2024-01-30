@@ -1,9 +1,41 @@
-
 services:
   mariadb:
     env_file: .env
     container_name: mariadb
     build: ./requirements/mariadb
-    expose:
-      - 3306:3306
     #volumes: - mariadb_data:/var/lib/mysql
+    healthcheck:
+      interval: 1s
+      timeout: 1s
+      retries: 50
+      test: [ "CMD", "nc", "-w", "1", "127.0.0.1", "3306" ]
+    networks:
+      - inception
+
+  nginx:
+    env_file: .env
+    container_name: nginx
+    build: ./requirements/nginx
+    healthcheck:
+      interval: 1s
+      timeout: 1s
+      retries: 50
+      test: [ "CMD", "nc", "-w", "1", "127.0.0.1", "80" ]
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    networks:
+      - inception
+
+  wordpress:
+    env_file: .env
+    container_name: wordpress
+    build: ./requirements/wordpress
+    depends_on:
+      nginx:
+        condition: service_healthy
+    networks:
+      - inception
+
+networks:
+  inception:

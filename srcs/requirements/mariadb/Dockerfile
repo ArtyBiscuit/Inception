@@ -1,10 +1,11 @@
 FROM debian:bullseye
 
-RUN            apt update && apt install -y \
-                mariadb-server \
-                mariadb-client \
-                netcat-openbsd
+RUN			apt update && apt install -y \
+				mariadb-server \
+				mariadb-client \
+				netcat-openbsd \
+				procps
 
-COPY        ./start.sh /bin
+COPY		./start.sh /bin
 
 ENTRYPOINT ["/bin/start.sh"]

@@ -8,7 +8,7 @@ services:
       interval: 1s
       timeout: 1s
       retries: 50
-      test: [ "CMD", "nc", "-w", "1", "127.0.0.1", "3306" ]
+      test: [ "CMD", "pgrep", "mysqld" ]
     networks:
       - inception
 
@@ -20,7 +20,7 @@ services:
       interval: 1s
       timeout: 1s
       retries: 50
-      test: [ "CMD", "nc", "-w", "1", "127.0.0.1", "443" ]
+      test: [ "CMD", "pgrep", "nginx" ]
     depends_on:
       mariadb:
         condition: service_healthy

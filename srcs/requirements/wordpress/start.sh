@@ -14,4 +14,13 @@ else
 		--dbuser="${MYSQL_USER}" \
 		--dbpass="${MYSQL_PASS}" \
 		--dbhost=mariadb
+	${WP} core install\
+		--url='http://arforgea.fr/'\
+		--title='Blog Title'\
+		--admin_user=$WP_USER\
+		--admin_password=$WP_PASS\
+		--admin_email='email@domain.com'
 fi
+
+mkdir /run/php
+php-fpm7.4 -F -R

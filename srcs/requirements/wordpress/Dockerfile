@@ -3,6 +3,7 @@ FROM debian:bullseye
 RUN			apt update && apt install -y\
 				wget\
 				php\
+				php-fpm\
 				php-mysql \
 				netcat-openbsd \
 				procps

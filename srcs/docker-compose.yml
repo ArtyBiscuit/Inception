@@ -12,32 +12,50 @@ services:
     networks:
       - inception
 
+  wordpress:
+    env_file: .env
+    container_name: wordpress
+    build: ./requirements/wordpress
+    volumes:
+      - type: bind
+        source: ./volume/www/html
+        target: /var/www/html
+        bind:
+          create_host_path: true
+    healthcheck:
+      interval: 1s
+      timeout: 1s
+      retries: 50
+      test: [ "CMD", "pgrep", "php-fpm7.4" ]
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    networks:
+      - inception
+
   nginx:
     env_file: .env
     container_name: nginx
     build: ./requirements/nginx
+    volumes:
+      - type: bind
+        source: ./volume/www/html
+        target: /var/www/html
+        bind:
+          create_host_path: true
     healthcheck:
       interval: 1s
       timeout: 1s
       retries: 50
       test: [ "CMD", "pgrep", "nginx" ]
     depends_on:
-      mariadb:
+      wordpress:
         condition: service_healthy
     ports:
       - 8080:8080
     networks:
       - inception
 
-  wordpress:
-    env_file: .env
-    container_name: wordpress
-    build: ./requirements/wordpress
-    depends_on:
-      nginx:
-        condition: service_healthy
-    networks:
-      - inception
 
 networks:
   inception:

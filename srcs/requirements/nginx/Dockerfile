@@ -5,7 +5,7 @@ RUN			apt update && apt install -y\
 				netcat-openbsd\
 				procps
 
-COPY		nginx.conf /etc/nginx/http.d/default.conf
+COPY		nginx.conf /etc/nginx/conf.d/default.conf
 COPY		./start.sh /bin
 
 ENTRYPOINT	["/bin/start.sh"]

@@ -3,7 +3,12 @@ services:
     env_file: .env
     container_name: mariadb
     build: ./requirements/mariadb
-    #volumes: - mariadb_data:/var/lib/mysql
+    volumes:
+      - type: bind
+        source: ./volume/mysql
+        target: /var/lib/mysql
+        bind:
+          create_host_path: true
     healthcheck:
       interval: 1s
       timeout: 1s
@@ -18,7 +23,7 @@ services:
     build: ./requirements/wordpress
     volumes:
       - type: bind
-        source: ./volume/www/html
+        source: ./volume/var/www/html
         target: /var/www/html
         bind:
           create_host_path: true
@@ -39,7 +44,7 @@ services:
     build: ./requirements/nginx
     volumes:
       - type: bind
-        source: ./volume/www/html
+        source: ./volume/var/www/html
         target: /var/www/html
         bind:
           create_host_path: true
@@ -59,3 +64,4 @@ services:
 
 networks:
   inception:
+    driver: bridge

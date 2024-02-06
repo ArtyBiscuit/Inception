@@ -4,6 +4,7 @@ RUN			apt update && apt install -y\
 				wget\
 				php\
 				php-fpm\
+				php-gd\
 				php-mysql \
 				netcat-openbsd \
 				procps

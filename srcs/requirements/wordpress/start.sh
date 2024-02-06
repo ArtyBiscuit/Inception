@@ -7,8 +7,6 @@ if [ -f "/bin/wp" ]; then
 else
 	mv /tmp/wp /bin/wp && chmod +x /bin/wp
 
-
-	mkdir /var/www/html
 	cd /var/www/html
 	${WP} core download
 	${WP} config create \
@@ -18,13 +16,15 @@ else
 		--dbhost=mariadb
 	echo "install..."
 	${WP} core install \
-		--url='http://localhost:8080'\
+		--url='http://arforgea.42.fr'\
 		--title='Blog Title'\
 		--admin_user=$WP_USER\
 		--admin_password=$WP_PASS\
 		--admin_email='none@none.com'
 fi
 
-chown -R www-data: /var/www/html
+chmod -R 777 /var/www/html/
+chown -R www-data:www-data /var/www/html
+
 mkdir /run/php
 php-fpm7.4 -F -R

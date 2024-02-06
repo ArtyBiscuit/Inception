@@ -3,6 +3,7 @@ FROM debian:bullseye
 RUN			apt update && apt install -y\
 				wget\
 				php\
+				php-xml\
 				php-fpm\
 				php-gd\
 				php-mysql \

@@ -11,9 +11,9 @@ else
 	${WP} core download
 
 	${WP} config create \
-		--dbname="${MYSQL_DATABASE}" \
-		--dbuser="${MYSQL_USER}" \
-		--dbpass="${MYSQL_PASS}" \
+		--dbname="$MYSQL_DATABASE" \
+		--dbuser="$MYSQL_USER" \
+		--dbpass="$MYSQL_PASS" \
 		--dbhost=mariadb
 
 	echo "install..."

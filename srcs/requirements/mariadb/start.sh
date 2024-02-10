@@ -5,7 +5,7 @@ if [ -d "/var/lib/mysql/${MYSQL_DATABASE}" ]; then
 	echo "Database already exists"
 else
 	# NOT INITIALISED
-	mysql_install_db --user="mysql" --ldata=/var/lib/mysql
+	mysql_install_db --user="${MYSQL_USER}" --ldata=/var/lib/mysql
 
 	<<-EOSTRING cat > /tmp/grant.sql
 		CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\` CHARACTER SET utf8 COLLATE utf8_general_ci ;

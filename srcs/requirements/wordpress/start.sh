@@ -9,22 +9,28 @@ else
 
 	cd /var/www/html
 	${WP} core download
+
 	${WP} config create \
 		--dbname="${MYSQL_DATABASE}" \
 		--dbuser="${MYSQL_USER}" \
 		--dbpass="${MYSQL_PASS}" \
 		--dbhost=mariadb
+
 	echo "install..."
+
 	${WP} core install \
 		--url='http://arforgea.42.fr'\
 		--title='Blog Title'\
-		--admin_user=$WP_USER\
-		--admin_password=$WP_PASS\
+		--admin_user=$WP_ROOT_USER\
+		--admin_password=$WP_ROOT_PASS\
 		--admin_email='none@none.com'
-fi
 
-chmod -R 777 /var/www/html/
-chown -R www-data:www-data /var/www/html
+	${WP} user create \
+		"$WP_USER"\
+		"$WP_USER@fuck.com"\
+		--user_pass="$WP_PASS"\
+		--role=contributor
+fi
 
 mkdir /run/php
 php-fpm7.4 -F -R

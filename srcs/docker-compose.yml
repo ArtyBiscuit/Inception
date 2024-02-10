@@ -5,15 +5,11 @@ services:
     build: ./requirements/mariadb
     volumes:
       - type: bind
-        source: ./volume/mysql
+        source: /home/arforgea/data/volume/mysql
         target: /var/lib/mysql
         bind:
           create_host_path: true
-    healthcheck:
-      interval: 1s
-      timeout: 1s
-      retries: 50
-      test: [ "CMD", "pgrep", "mysqld" ]
+    restart: on-failure
     networks:
       - inception
 
@@ -23,18 +19,13 @@ services:
     build: ./requirements/wordpress
     volumes:
       - type: bind
-        source: ./volume/var/www/html
+        source: /home/arforgea/data/volume/var/www/html
         target: /var/www/html
         bind:
           create_host_path: true
-    healthcheck:
-      interval: 1s
-      timeout: 1s
-      retries: 50
-      test: [ "CMD", "pgrep", "php-fpm7.4" ]
     depends_on:
-      mariadb:
-        condition: service_healthy
+      - mariadb
+    restart: on-failure
     networks:
       - inception
 
@@ -44,18 +35,13 @@ services:
     build: ./requirements/nginx
     volumes:
       - type: bind
-        source: ./volume/var/www/html
+        source: /home/arforgea/data/volume/var/www/html
         target: /var/www/html
         bind:
           create_host_path: true
-    healthcheck:
-      interval: 1s
-      timeout: 1s
-      retries: 50
-      test: [ "CMD", "pgrep", "nginx" ]
     depends_on:
-      wordpress:
-        condition: service_healthy
+      - wordpress
+    restart: on-failure
     ports:
       - 443:443
     networks:

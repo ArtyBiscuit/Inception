@@ -3,7 +3,6 @@ FROM debian:bullseye
 RUN			apt update && apt install -y\
 				nginx\
 				netcat-openbsd\
-				procps\
 				openssl
 
 RUN mkdir /etc/nginx/ssl
